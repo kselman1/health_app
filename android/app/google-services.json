@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "688431988167",
+    "project_id": "health-app-proj",
+    "storage_bucket": "health-app-proj.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:688431988167:android:84869d23ef49ee5fcb6de2",
+        "android_client_info": {
+          "package_name": "ba.skim.health_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCt_mbqzxlnZIUXokujP6VGpxMTYZVU7Ro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
