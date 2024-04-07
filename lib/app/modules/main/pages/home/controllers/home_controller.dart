@@ -49,10 +49,10 @@ class HomeController extends GetxController {
         mainController.pageController.jumpToPage(1);
         
       } else {
-        print('Failed to fetch product information: ${response.statusCode}');
+        print('Failed product: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching product information: $e');
+      print('Error: $e');
     }
   }
 
