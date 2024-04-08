@@ -10,21 +10,26 @@ class HomeView extends GetView<HomeController> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
+        centerTitle: true,
+        actions: [
+          TextButton(
+              onPressed: () {
+                controller.logout();
+              },
+              child: const Text('Logout'))
+        ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                await controller.scanBarcode();
-              },
-              child: const Text('Fetch Product Info'),
-            ),
-            
-           
-          ],
-        ),
+        child: Obx(() {
+          return controller.isLoading.value
+              ? const CircularProgressIndicator()
+              : ElevatedButton(
+                  onPressed: () async {
+                    await controller.scanBarcode();
+                  },
+                  child: const Text('Fetch Product Info'),
+                );
+        }),
       ),
     );
   }

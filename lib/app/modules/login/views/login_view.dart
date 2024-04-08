@@ -1,13 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
 import '../controllers/login_controller.dart';
 
 class LoginView extends GetView<LoginController> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _passwordFocusNode = FocusNode();
 
   LoginView({super.key});
 
@@ -25,41 +23,51 @@ class LoginView extends GetView<LoginController> {
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
+              onSubmitted: (_) {
+                FocusScope.of(context).requestFocus(_passwordFocusNode);
+              },
             ),
             const SizedBox(height: 20),
             TextField(
+              focusNode: _passwordFocusNode,
               controller: _passwordController,
               decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  await controller.signInWithEmailAndPassword(
+              onSubmitted: (_) async {
+                 await controller.signInWithEmailAndPassword(
                     _emailController.text.trim(),
                     _passwordController.text.trim(),
                   );
-             
-                } on FirebaseAuthException catch (e) {
-                  Get.snackbar('Error', e.message ?? 'An error occurred');
-                } catch (e) {
-                  Get.snackbar('Error', 'An error occurred');
-                }
               },
-              child: const Text('Login'),
             ),
+            const SizedBox(height: 20),
+            Obx(() {
+              return controller.isLoading.value
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: () async {
+                         await controller.signInWithEmailAndPassword(
+                    _emailController.text.trim(),
+                    _passwordController.text.trim(),
+                  );
+                      },
+                      child: const Text('Login'),
+                    );
+            }),
             const SizedBox(
               height: 40,
             ),
             TextButton(
-                onPressed: () {
-                  Get.offAndToNamed('/registration');
-                },
-                child: const Text('Register')),
+              onPressed: () {
+                Get.offAndToNamed('/registration');
+              },
+              child: const Text('Register'),
+            ),
           ],
         ),
       ),
     );
   }
+
+ 
 }

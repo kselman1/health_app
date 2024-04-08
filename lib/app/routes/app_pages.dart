@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:health_app/app/data/sources/shared_pref_source.dart';
 
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
@@ -11,8 +12,8 @@ part 'app_routes.dart';
 
 class AppPages {
   AppPages._();
-
-  static const INITIAL = Routes.LOGIN;
+  
+  static get INITIAL =>  Get.find<SharedPreferencesSource>().getAccessToken() == null ? Routes.LOGIN : Routes.MAIN;
 
   static final routes = [
    

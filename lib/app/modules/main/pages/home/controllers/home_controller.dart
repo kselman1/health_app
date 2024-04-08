@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:health_app/app/data/models/product.dart';
+import 'package:health_app/app/data/sources/shared_pref_source.dart';
+import 'package:health_app/app/modules/login/controllers/login_controller.dart';
 import 'package:health_app/app/modules/main/controllers/main_controller.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,7 +13,27 @@ class HomeController extends GetxController {
   late Product proizvod;
   final isLoading = false.obs;
   final listGemini=[].obs;
+  final userName=''.obs;
   final mainController=Get.put(MainController());
+  final loginController=Get.put(LoginController());
+/*
+  HomeController(){
+
+    load();
+  }
+  
+  void load() async{
+    await getUserName();
+  }
+
+  Future<void> getUserName() async {
+   isLoading.value=true;
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot<Map<String, dynamic>> userSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    userName.value = userSnapshot.get('name');
+   isLoading.value=false;
+    
+  }*/
 
   Future<void> scanBarcode() async {
     try {
@@ -25,6 +47,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> fetchProductInfo() async {
+    isLoading.value=true;
     final String barcode = scannedResult.value;
     final String apiUrl =
         'https://world.openfoodfacts.org/api/v0/product/$barcode.json';
@@ -46,6 +69,7 @@ class HomeController extends GetxController {
         );
       
         print('Product: $proizvod');
+        isLoading.value=false;
         mainController.pageController.jumpToPage(1);
         
       } else {
@@ -55,6 +79,12 @@ class HomeController extends GetxController {
       print('Error: $e');
     }
   }
+  Future<void> logout()async{
+    loginController.signOut();
+    Get.find<SharedPreferencesSource>().removeAccessToken();
+     Get.offAndToNamed('/login');
+  }
+  
 
  
 }
