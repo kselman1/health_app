@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:health_app/app/modules/main/pages/history/controllers/history_controller.dart';
 import 'package:health_app/app/modules/main/pages/home/controllers/home_controller.dart';
 import 'package:health_app/app/modules/main/pages/info/controllers/info_controller.dart';
 
@@ -12,5 +13,6 @@ class MainBinding extends Bindings {
     );
      Get.lazyPut<HomeController>(() => HomeController());
      Get.lazyPut<InfoController>(() => InfoController());
+     Get.lazyPut<HistoryController>(() => HistoryController());
   }
 }

@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:health_app/app/modules/main/pages/history/views/history_product.dart';
+import 'package:health_app/app/modules/main/pages/history/views/history_view.dart';
 import 'package:health_app/app/modules/main/pages/home/views/home_view.dart';
 import 'package:health_app/app/modules/main/pages/info/views/info_view.dart';
 
@@ -29,7 +31,9 @@ class MainView extends GetView<MainController> {
           physics: const NeverScrollableScrollPhysics(),
           children: const [
             HomeView(),
-            InfoView()
+            InfoView(),
+            HistoryView(),
+            HistoryProduct()
            
           ],
         ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:health_app/app/data/models/product.dart';
@@ -14,6 +15,7 @@ class HomeController extends GetxController {
   final isLoading = false.obs;
   final listGemini=[].obs;
   final userName=''.obs;
+  final brand=''.obs;
   final mainController=Get.put(MainController());
   final loginController=Get.put(LoginController());
 /*
@@ -39,7 +41,7 @@ class HomeController extends GetxController {
     try {
       final result = await BarcodeScanner.scan();
       scannedResult.value = result.rawContent;
-
+      
       await fetchProductInfo();
     } catch (e) {
       print('Error scanning barcode: $e');
@@ -67,10 +69,17 @@ class HomeController extends GetxController {
             '_keywords': data['product']['_keywords'] ?? [],
           },
         );
-      
+       brand.value = proizvod.product['brands'] ?? '';
+       
+       
+    
         print('Product: $proizvod');
+
+        await addCodeToScannedCodes();
         isLoading.value=false;
-        mainController.pageController.jumpToPage(1);
+       mainController.pageController.jumpToPage(1);
+       
+       
         
       } else {
         print('Failed product: ${response.statusCode}');
@@ -84,6 +93,24 @@ class HomeController extends GetxController {
     Get.find<SharedPreferencesSource>().removeAccessToken();
      Get.offAndToNamed('/login');
   }
+
+Future<void> addCodeToScannedCodes() async {
+  try {
+   
+    CollectionReference scannedCodesCollection =
+        FirebaseFirestore.instance.collection('scannedCodes');
+
+    await scannedCodesCollection.doc(loginController.user!.value!.uid).set({
+      'userId': loginController.user!.value!.uid,
+      'codes': FieldValue.arrayUnion([scannedResult.value]),
+      'product':FieldValue.arrayUnion([brand.value]),
+    }, SetOptions(merge: true));
+
+    print('Code added successfully to scannedCodes collection for user ${loginController.user!.value!.uid}');
+  } catch (error) {
+    print('Error adding code to scannedCodes collection: $error');
+  }
+}
   
 
  

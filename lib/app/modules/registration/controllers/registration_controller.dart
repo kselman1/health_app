@@ -6,10 +6,15 @@ import 'package:health_app/app/data/models/user.dart';
 
 
 class RegistrationController extends GetxController {
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final CollectionReference _usersCollection =
       FirebaseFirestore.instance.collection('users');
-  final focusNodes=[FocusNode(), FocusNode(), FocusNode()];
+  final focusNodes=[FocusNode(), FocusNode(), FocusNode(), FocusNode()];
   final isLoading=false.obs;
 
   Future<void> registerUser(String name, String email, String password, String phone) async {

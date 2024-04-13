@@ -1,9 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_app/app/data/sources/shared_pref_source.dart';
 
 
 class LoginController extends GetxController {
+
+   final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final FocusNode passwordFocusNode = FocusNode();
+  final FocusNode emailFocusNode=FocusNode();
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final isLoading=false.obs;
 
