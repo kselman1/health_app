@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_app/app/modules/main/controllers/main_controller.dart';
 import 'package:health_app/app/modules/main/pages/history/controllers/history_controller.dart';
+import 'package:health_app/app/modules/main/pages/home/controllers/home_controller.dart';
 import 'package:health_app/app/modules/main/pages/info/controllers/info_controller.dart';
 import 'package:health_app/app/modules/main/views/custom_drawer.dart';
 
 class InfoView extends GetView<InfoController> {
   const InfoView({super.key});
-
+  
+  
   @override
   Widget build(BuildContext context) {
     final mainController = Get.put(MainController());
     final historyController = Get.put(HistoryController());
+    final homeController=Get.put(HomeController());
 
     return Scaffold(
       backgroundColor: Colors.blue[100],
@@ -31,12 +34,12 @@ class InfoView extends GetView<InfoController> {
       ),
       body: SafeArea(
         child: Obx(
-          () => controller.isLoading.value
+          () => homeController.isLoading.value
               ? const Center(child: CircularProgressIndicator(color: Colors.black,))
               : SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    child: controller.errorMessage.value
+                    child: homeController.errorMessage.value
                         ? Padding(
                           padding: const EdgeInsets.only(top: 200, left: 70, right: 70),
                           child: Column(
@@ -60,7 +63,7 @@ class InfoView extends GetView<InfoController> {
                             ),
                             child: Center(
                               child: Column(
-                                children: controller.listGemini.map((line) {
+                                children: homeController.listGemini.map((line) {
                                   String replacedText = line.replaceAll("*", "");
                                   return Text(
                                     replacedText,

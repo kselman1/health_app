@@ -34,11 +34,16 @@ class RegistrationController extends GetxController {
       phone: phone,
     ).toJson());
     isLoading.value=false;
+    nameController.clear();
+    passwordController.clear();
+    emailController.clear();
+    phoneController.clear();
+
      Get.offAndToNamed('/login');
     
     print('User registered successfully');
   } catch (e) {
-    
+    isLoading.value=false;
     print('Error registering user: $e');
   }
 }

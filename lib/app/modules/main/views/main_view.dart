@@ -18,9 +18,14 @@ class MainView extends GetView<MainController> {
      
       body: WillPopScope(
         onWillPop: () async {
+         
+          
           if (controller.page.value == 0) {
+            
+            
             return true;
           } else {
+            
             controller.pageController.jumpToPage(0);
 
             return false;

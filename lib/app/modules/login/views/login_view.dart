@@ -35,14 +35,38 @@ class LoginView extends GetView<LoginController> {
                 const SizedBox(
                   height: 20,
                 ),
-                CustomLoginTextField(
+                /*CustomLoginTextField(
                     onSubmitted: (_) {
                       FocusScope.of(context)
                           .requestFocus(controller.passwordFocusNode);
                     },
                     textController: controller.emailController,
                     focusNode: controller.emailFocusNode,
-                    labelText: 'Email'),
+                    labelText: 'Email'),*/
+                    Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: Colors.black, width: 2),
+        color: Colors.white,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: TextField(
+       
+        controller: controller.emailController,
+        
+        decoration: const InputDecoration(
+          labelText: 'Email',
+          labelStyle: TextStyle(color: Colors.black),
+          border: InputBorder.none,
+        ),
+        style: const TextStyle(
+          color: Colors.black,
+        ),
+        onSubmitted:(_){
+          FocusScope.of(context).requestFocus(controller.passwordFocusNode);
+        },
+      ),
+                    ),
                 const SizedBox(height: 40),
                 CustomLoginTextField(
                     onSubmitted: (_) async {

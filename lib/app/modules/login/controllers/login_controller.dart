@@ -36,8 +36,11 @@ class LoginController extends GetxController {
         print('User Token: $token');
       }
       isLoading.value=false;
+      emailController.clear();
+      passwordController.clear();
       Get.offAndToNamed('/main');
     } catch (e) {
+      isLoading.value=false;
       Get.snackbar('Error', e.toString());
     }
   }

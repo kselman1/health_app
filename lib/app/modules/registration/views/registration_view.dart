@@ -82,16 +82,17 @@ class RegistrationView extends GetView<RegistrationController> {
                           controller.phoneController.text,
                         );
                       },
-                      textController: controller.nameController,
+                      textController: controller.phoneController,
                       focusNode: controller.focusNodes[3],
                       labelText: 'Phone',
                     ),
                     const SizedBox(height: 20,),
                     Obx(() {
                       return controller.isLoading.value
-                        ? const CircularProgressIndicator()
+                        ? const CircularProgressIndicator(color: Colors.red,)
                         : CustomRegButton(
                           () async {
+                            Focus.of(context).unfocus();
                             await controller.registerUser(
                               controller.nameController.text,
                               controller.emailController.text,

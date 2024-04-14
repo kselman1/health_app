@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get/get.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:health_app/app/data/models/product.dart';
@@ -18,6 +19,13 @@ class HomeController extends GetxController {
   final brand=''.obs;
   final mainController=Get.put(MainController());
   final loginController=Get.put(LoginController());
+  final exists=false.obs;
+   final response=[].obs;
+  final codes=[].obs;
+  final product=[].obs;
+  final errorMessage=false.obs;
+  
+
 /*
   HomeController(){
 
@@ -36,7 +44,12 @@ class HomeController extends GetxController {
    isLoading.value=false;
     
   }*/
-
+  void resetVariables(){
+    scannedResult.value='';
+    brand.value='';
+    exists.value=false;
+    proizvod=const Product(code: '', product: {});
+  }
   Future<void> scanBarcode() async {
     try {
       final result = await BarcodeScanner.scan();
@@ -56,11 +69,17 @@ class HomeController extends GetxController {
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
-
+       
       if (response.statusCode == 200) {
         // print('Product Info: ${response.body}');
         final Map<String, dynamic> data = json.decode(response.body);
-
+         if (data['status'] == 0) {
+        print('Product not found');
+       isLoading.value=false;
+         mainController.pageController.jumpToPage(1);
+        return;
+      }
+      exists.value=true;
         proizvod = Product(
           code: data['code'] ?? '',
           product: {
@@ -73,10 +92,14 @@ class HomeController extends GetxController {
        
        
     
-        print('Product: $proizvod');
+       // print('Product: $proizvod');
 
-        await addCodeToScannedCodes();
-        isLoading.value=false;
+       
+
+      await getScannedCodes();
+      await analyzeProductWithGemini();
+
+       isLoading.value=false;
        mainController.pageController.jumpToPage(1);
        
        
@@ -111,6 +134,93 @@ Future<void> addCodeToScannedCodes() async {
     print('Error adding code to scannedCodes collection: $error');
   }
 }
+Future<void> addResponseToScannedCodes(List<String> response) async {
+  try {
+    CollectionReference scannedCodesCollection =
+        FirebaseFirestore.instance.collection('scannedCodes');
+
+    await scannedCodesCollection.doc(loginController.user!.value!.uid).set({
+      'response': FieldValue.arrayUnion(response)
+    }, SetOptions(merge: true));
+    print('Response added successfully to scannedCodes collection for user');
+  } catch (error) {
+    print('Error adding response to scannedCodes collection: $error');
+  }
+}
+Future<void> getScannedCodes() async {
+  try {
+    CollectionReference scannedCodesCollection =
+        FirebaseFirestore.instance.collection('scannedCodes');
+
+    DocumentSnapshot documentSnapshot = await scannedCodesCollection
+        .doc(loginController.user!.value!.uid)
+        .get();
+
+    if (documentSnapshot.exists) {
+      Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+       codes.value = List<String>.from(data['codes'] ?? []);
+      product.value = List<String>.from(data['product'] ?? []);
+      response.value = List<String>.from(data['response'] ?? []); 
+    } else {
+      print('No data found for user ${loginController.user!.value!.uid}');
+      await addCodeToScannedCodes();
+    }
+  } catch (error) {
+    print('Error getting scannedCodes data: $error');
+  }
+}
+Future<void> analyzeProductWithGemini() async {
+   
+  if(exists.value==false){
+    errorMessage.value=true;
+    return;
+  }
+  final String brands = proizvod.product['brands'] ?? '';  
+    final List<String> keywords =
+        List<String>.from(proizvod.product['_keywords'] ?? []);
+
+    final String brand = brands.isNotEmpty ? brands.split(' ').first : '';
+     
+    
+   if(codes.contains(scannedResult.value)){
+    print('ima ga');
+    listGemini.value=response;
+    return;
+   } else{
+    await addCodeToScannedCodes();
+   }
+    String prompt =
+        "What is the health aspect of consuming $brand, $keywords ? What are its nutritional contents like sugar and fat?";
+
+
+    try {
+    
+      final gemini = Gemini.instance;
+
+      String error = '';
+     /* gemini
+          .text(prompt)
+          .then((value) => listGemini.value = value!.output!.split('\\n'))
+          .catchError((e) => error = e);
+      List<String> stringList = listGemini.map((element) => element.toString()).toList();
+      */
+      final value = await gemini.text(prompt); 
+    if (value != null && value.output != null) {
+      listGemini.value = value.output!.split('\\n');
+     
+      await addResponseToScannedCodes(listGemini.map((element) => element.toString()).toList());
+      
+    }
+
+      print(error);
+
+     
+     // isLoading.value=false;
+    } catch (e) {
+    
+      print("Error analyzing product with Gemini: $e");
+    }
+  }
   
 
  
