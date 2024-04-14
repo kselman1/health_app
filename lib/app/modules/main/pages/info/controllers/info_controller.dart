@@ -50,7 +50,7 @@ class InfoController extends GetxController {
    
   Future<void> logout()async{
     loginController.signOut();
-     Get.find<SharedPreferencesSource>().removeAccessToken();
-    Get.offAndToNamed('/login');
+    Get.find<SharedPreferencesSource>().removeAccessToken();
+     Get.offAllNamed('/login');
   }
 }

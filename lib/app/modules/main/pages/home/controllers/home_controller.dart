@@ -114,7 +114,7 @@ class HomeController extends GetxController {
   Future<void> logout()async{
     loginController.signOut();
     Get.find<SharedPreferencesSource>().removeAccessToken();
-     Get.offAndToNamed('/login');
+     Get.offAllNamed('/login');
   }
 
 Future<void> addCodeToScannedCodes() async {
