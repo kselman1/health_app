@@ -1,6 +1,6 @@
 # health_app
 
-A new Flutter project.
+An app for scannning barcodes of products anf getting health aspects of those products using Gemini AI.
 
 ## Getting Started
 
